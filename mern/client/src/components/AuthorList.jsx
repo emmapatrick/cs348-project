@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const Record = (props) => (
+const Author = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-      {props.record.name}
+      {props.author.name}
     </td>
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-      {props.record.position}
+      {props.author.dob}
     </td>
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
-      {props.record.level}
+      {props.author.gender}
     </td>
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
       <div className="flex gap-2">
         <Link
           className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-slate-100 h-9 rounded-md px-3"
-          to={`/edit/${props.record._id}`}
+          to={`/edit-author/${props.author._id}`}
         >
           Edit
         </Link>
@@ -25,7 +25,7 @@ const Record = (props) => (
           color="red"
           type="button"
           onClick={() => {
-            props.deleteRecord(props.record._id);
+            props.deleteAuthor(props.author._id);
           }}
         >
           Delete
@@ -35,42 +35,42 @@ const Record = (props) => (
   </tr>
 );
 
-export default function RecordList() {
-  const [records, setRecords] = useState([]);
+export default function authorList() {
+  const [authors, setAuthors] = useState([]);
 
   // This method fetches the records from the database.
   useEffect(() => {
-    async function getRecords() {
-      const response = await fetch(`http://localhost:5050/record/`);
+    async function getAuthors() {
+      const response = await fetch(`http://localhost:5050/author/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
         return;
       }
-      const records = await response.json();
-      setRecords(records);
+      const authors = await response.json();
+      setAuthors(authors);
     }
-    getRecords();
+    getAuthors();
     return;
-  }, [records.length]);
+  }, [authors.length]);
 
   // This method will delete a record
-  async function deleteRecord(id) {
-    await fetch(`http://localhost:5050/record/${id}`, {
+  async function deleteAuthor(id) {
+    await fetch(`http://localhost:5050/author/${id}`, {
       method: "DELETE",
     });
-    const newRecords = records.filter((el) => el._id !== id);
-    setRecords(newRecords);
+    const newAuthors = authors.filter((el) => el._id !== id);
+    setAuthors(newAuthors);
   }
 
   // This method will map out the records on the table
-  function recordList() {
-    return records.map((record) => {
+  function AuthorList() {
+    return authors.map((author) => {
       return (
-        <Record
-          record={record}
-          deleteRecord={() => deleteRecord(record._id)}
-          key={record._id}
+        <Author
+          author={author}
+          deleteAuthor={() => deleteAuthor(author._id)}
+          key={author._id}
         />
       );
     });
@@ -79,7 +79,7 @@ export default function RecordList() {
   // This following section will display the table with the records of individuals.
   return (
     <>
-      <h3 className="text-lg font-semibold p-4">Employee Records</h3>
+      <h3 className="text-lg font-semibold p-4">Author Records</h3>
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">
           <table className="w-full caption-bottom text-sm">
@@ -89,10 +89,10 @@ export default function RecordList() {
                   Name
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  Position
+                  Birth Year
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
-                  Level
+                  Gender
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
                   Action
@@ -100,7 +100,7 @@ export default function RecordList() {
               </tr>
             </thead>
             <tbody className="[&amp;_tr:last-child]:border-0">
-              {recordList()}
+              {AuthorList()}
             </tbody>
           </table>
         </div>
