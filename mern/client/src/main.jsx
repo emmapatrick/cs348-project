@@ -25,6 +25,14 @@ const router = createBrowserRouter([
           </>
         ),
       },
+      {
+        path: "/author",
+        element: <AuthorList />, // Render AuthorList component for /author path
+      },
+      {
+        path: "/author/:gender", // Define a route to handle gender filtering
+        element: <AuthorList />, // Render AuthorList component with gender filtering
+      },
     ],
   },
   {

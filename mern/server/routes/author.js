@@ -13,9 +13,16 @@ const router = express.Router();
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
-  let collection = await db.collection("authors");
-  let results = await collection.find({}).toArray();
-  res.send(results).status(200);
+  try {
+    const { gender } = req.query;
+    const filter = gender ? { gender } : {};
+    const collection = db.collection("authors");
+    const results = await collection.find(filter).toArray();
+    res.send(results).status(200);
+  } catch (error) {
+    console.error("Error fetching authors:", error);
+    res.status(500).send("Error fetching authors");
+  }
 });
 
 // This section will help you get a single record by id

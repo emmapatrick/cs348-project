@@ -14,11 +14,20 @@ export default function Author() {
   useEffect(() => {
     async function fetchData() {
       const id = params.id?.toString() || undefined;
-      if(!id) return;
+      const gender = params.gender || undefined;
+
+      if(!id && !gender) return;
       setIsNew(false);
-      const response = await fetch(
-        `http://localhost:5050/author/${params.id.toString()}`
-      );
+      let response;
+      if (id) {
+        response = await fetch(
+          `http://localhost:5050/author/${params.id.toString()}`
+        );
+      } else {
+        response = await fetch(
+          `http://localhost:5050/author?gender=${gender}`
+        );
+      }
       if (!response.ok) {
         const message = `An error has occurred: ${response.statusText}`;
         console.error(message);
@@ -34,7 +43,7 @@ export default function Author() {
     }
     fetchData();
     return;
-  }, [params.id, navigate]);
+  }, [params.id, params.gender, navigate]);
 
   // These methods will update the state properties.
   function updateForm(value) {

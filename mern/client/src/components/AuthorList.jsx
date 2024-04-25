@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Author = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -37,11 +37,18 @@ const Author = (props) => (
 
 export default function authorList() {
   const [authors, setAuthors] = useState([]);
+  const [genderFilter, setGenderFilter] = useState("");
+  const navigateTo = useNavigate();
 
   // This method fetches the records from the database.
   useEffect(() => {
     async function getAuthors() {
-      const response = await fetch(`http://localhost:5050/author/`);
+      let url = `http://localhost:5050/author/`;
+      if (genderFilter) {
+        url += `?gender=${genderFilter}`;
+      }
+      console.log(url);
+      const response = await fetch(url);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
@@ -52,7 +59,7 @@ export default function authorList() {
     }
     getAuthors();
     return;
-  }, [authors.length]);
+  }, [authors.length, genderFilter]);
 
   // This method will delete a record
   async function deleteAuthor(id) {
@@ -76,12 +83,27 @@ export default function authorList() {
     });
   }
 
+  const handleFilterChange = (selectedGender) => {
+    setGenderFilter(selectedGender);
+    navigateTo(`/author${selectedGender ? `?gender=${selectedGender}` : ""}`);
+    console.log(selectedGender);
+  };
+
   // This following section will display the table with the records of individuals.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Author Records</h3>
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">
+        <div>
+            <label htmlFor="genderFilter" className="mr-2">Filter by Gender:</label>
+            <select id="genderFilter" onChange={(e) => handleFilterChange(e.target.value)}>
+              <option value="">All</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Nonbinary">Nonbinary</option>
+            </select>
+          </div>
           <table className="w-full caption-bottom text-sm">
             <thead className="[&amp;_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
