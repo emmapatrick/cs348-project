@@ -45,21 +45,21 @@ export default function Author() {
     return;
   }, [params.id, params.gender, navigate]);
 
-  // These methods will update the state properties.
+  // updates state properties
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
     });
   }
 
-  // This function will handle the submission.
+  // handles submission
   async function onSubmit(e) {
     e.preventDefault();
     const person = { ...form };
     try {
       let response;
       if (isNew) {
-        // if we are adding a new record we will POST to /record.
+        // to add new author, post to /create-author
         response = await fetch("http://localhost:5050/author/create-author", {
           method: "POST",
           headers: {
@@ -68,7 +68,7 @@ export default function Author() {
           body: JSON.stringify(person),
         });
       } else {
-        // if we are updating a record we will PATCH to /record/:id.
+        // to edit new author, patch to /edit-author
         response = await fetch(`http://localhost:5050/author/edit-author/${params.id}`, {
           method: "PATCH",
           headers: {
@@ -89,7 +89,7 @@ export default function Author() {
     }
   }
 
-  // This following section will display the form that takes the input from the user.
+  // create/edit author form display
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Create/Update Author Record</h3>

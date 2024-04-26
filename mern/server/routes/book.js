@@ -1,20 +1,13 @@
 import express from "express";
-
-// This will help us connect to the database
 import db from "../db/connection.js";
-
-// This help convert the id from string to ObjectId for the _id.
 import { ObjectId } from "mongodb";
-
 import mongoose from "mongoose";
 import Book from "../../client/src/models/BookModel.js";
 
-// router is an instance of the express router.
-// We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
+// router used to define routes
 const router = express.Router();
 
-// This section will help you get a list of all the records.
+// gets list of all books, including genre filtering
 router.get("/", async (req, res) => {
   try {
     const { genre } = req.query;
@@ -28,7 +21,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// This section will help you get a single record by id
+// gets book based on id
 router.get("/:id", async (req, res) => {
   let collection = await db.collection("books");
   let query = { _id: new ObjectId(req.params.id) };
@@ -96,7 +89,7 @@ router.patch("/edit-book/:id", async (req, res) => {
   }
 });
 
-// This section will help you delete a record
+// deletes book by id
 router.delete("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };

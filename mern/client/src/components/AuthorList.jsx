@@ -40,7 +40,7 @@ export default function authorList() {
   const [genderFilter, setGenderFilter] = useState("");
   const navigateTo = useNavigate();
 
-  // This method fetches the records from the database.
+  // fetches authors from db
   useEffect(() => {
     async function getAuthors() {
       let url = `http://localhost:5050/author/`;
@@ -60,7 +60,7 @@ export default function authorList() {
     return;
   }, [authors.length, genderFilter]);
 
-  // This method will delete a record
+  // deletes author by id
   async function deleteAuthor(id) {
     await fetch(`http://localhost:5050/author/${id}`, {
       method: "DELETE",
@@ -69,7 +69,7 @@ export default function authorList() {
     setAuthors(newAuthors);
   }
 
-  // This method will map out the records on the table
+  // maps authors to the table
   function AuthorList() {
     return authors.map((author) => {
       return (
@@ -87,7 +87,6 @@ export default function authorList() {
     navigateTo(`/author${selectedGender ? `?gender=${selectedGender}` : ""}`);
   };
 
-  // This following section will display the table with the records of individuals.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Author Records</h3>

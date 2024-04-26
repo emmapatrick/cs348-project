@@ -1,21 +1,13 @@
 import express from "express";
-
-// This will help us connect to the database
 import db from "../db/connection.js";
-
-// This help convert the id from string to ObjectId for the _id.
 import { ObjectId } from "mongodb";
 
 import mongoose from "mongoose";
 import Author from "../../client/src/models/AuthorModel.js";
 
-
-// router is an instance of the express router.
-// We use it to define our routes.
-// The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
-// This section will help you get a list of all the records.
+// gets list of all authors, including gender filtering
 router.get("/", async (req, res) => {
   try {
     const { gender } = req.query;
@@ -29,7 +21,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// This section will help you get a single record by id
+// gets author by id
 router.get("/:id", async (req, res) => {
   let collection = await db.collection("authors");
   let query = { _id: new ObjectId(req.params.id) };
@@ -39,7 +31,7 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// creating a new author
+// creates a new author
 router.post("/create-author", async (req, res) => {
   try {
     let newDocument = {
@@ -95,7 +87,7 @@ router.patch("/edit-author/:id", async (req, res) => {
   }
 });
 
-// This section will help you delete a record
+// deletes author by id
 router.delete("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };

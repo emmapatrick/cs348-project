@@ -43,7 +43,7 @@ export default function bookList() {
   const [genreFilter, setGenreFilter] = useState("");
   const navigateTo = useNavigate();
 
-  // This method fetches the records from the database.
+  // fetches books from db
   useEffect(() => {
     async function getBooks() {
       let url = `http://localhost:5050/book/`;
@@ -63,7 +63,7 @@ export default function bookList() {
     return;
   }, [books.length, genreFilter]);
 
-  // This method will delete a record
+  // deletes book by id
   async function deleteBook(id) {
     await fetch(`http://localhost:5050/book/${id}`, {
       method: "DELETE",
@@ -72,7 +72,7 @@ export default function bookList() {
     setBooks(newBooks);
   }
 
-  // This method will map out the records on the table
+  // maps out books on the table
   function BookList() {
     return books.map((book) => {
       return (
@@ -90,7 +90,6 @@ export default function bookList() {
     navigateTo(`/book${selectedGenre ? `?genre=${selectedGenre}` : ""}`);
   };
 
-  // This following section will display the table with the records of individuals.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Book Records</h3>

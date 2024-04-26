@@ -46,21 +46,21 @@ export default function Book() {
     return;
   }, [params.id, params.genre, navigate]);
 
-  // These methods will update the state properties.
+  // updates state properties
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
     });
   }
 
-  // This function will handle the submission.
+  // handles submission of form
   async function onSubmit(e) {
     e.preventDefault();
     const person = { ...form };
     try {
       let response;
       if (isNew) {
-        // if we are adding a new record we will POST to /record.
+        // to add new book, post to /create-book
         response = await fetch("http://localhost:5050/book/create-book", {
           method: "POST",
           headers: {
@@ -69,7 +69,7 @@ export default function Book() {
           body: JSON.stringify(person),
         });
       } else {
-        // if we are updating a record we will PATCH to /record/:id.
+        // to edit book, patch to /edit-book
         response = await fetch(`http://localhost:5050/book/edit-book/${params.id}`, {
           method: "PATCH",
           headers: {
@@ -90,7 +90,7 @@ export default function Book() {
     }
   }
 
-  // This following section will display the form that takes the input from the user.
+  // create/update form display
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Create/Update Book Record</h3>
