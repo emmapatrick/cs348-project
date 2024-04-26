@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Book = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -40,11 +40,17 @@ const Book = (props) => (
 
 export default function bookList() {
   const [books, setBooks] = useState([]);
+  const [genreFilter, setGenreFilter] = useState("");
+  const navigateTo = useNavigate();
 
   // This method fetches the records from the database.
   useEffect(() => {
     async function getBooks() {
-      const response = await fetch(`http://localhost:5050/book/`);
+      let url = `http://localhost:5050/book/`;
+      if (genreFilter) {
+        url += `?genre=${genreFilter}`;
+      }
+      const response = await fetch(url);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
@@ -55,7 +61,7 @@ export default function bookList() {
     }
     getBooks();
     return;
-  }, [books.length]);
+  }, [books.length, genreFilter]);
 
   // This method will delete a record
   async function deleteBook(id) {
@@ -79,12 +85,26 @@ export default function bookList() {
     });
   }
 
+  const handleFilterChange = (selectedGenre) => {
+    setGenreFilter(selectedGenre);
+    navigateTo(`/book${selectedGenre ? `?genre=${selectedGenre}` : ""}`);
+  };
+
   // This following section will display the table with the records of individuals.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Book Records</h3>
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">
+        <div>
+          <label htmlFor="genreFilter">Filter by Genre:</label>
+            <select id="genreFilter" onChange={(e) => handleFilterChange(e.target.value)}>
+              <option value="">All</option>
+              <option value="Romance">Romance</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Fiction">Fiction</option>
+            </select>
+          </div>
           <table className="w-full caption-bottom text-sm">
             <thead className="[&amp;_tr]:border-b">
               <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">

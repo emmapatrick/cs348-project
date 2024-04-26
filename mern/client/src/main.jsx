@@ -33,6 +33,14 @@ const router = createBrowserRouter([
         path: "/author/:gender", // Define a route to handle gender filtering
         element: <AuthorList />, // Render AuthorList component with gender filtering
       },
+      {
+        path: "/book",
+        element: <BookList />, // Render AuthorList component for /author path
+      },
+      {
+        path: "/book/:genre",
+        element: <BookList />,
+      },
     ],
   },
   {

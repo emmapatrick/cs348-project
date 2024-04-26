@@ -6,6 +6,10 @@ import db from "../db/connection.js";
 // This help convert the id from string to ObjectId for the _id.
 import { ObjectId } from "mongodb";
 
+import mongoose from "mongoose";
+import Author from "../../client/src/models/AuthorModel.js";
+
+
 // router is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
@@ -35,7 +39,7 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// This section will help you create a new record.
+// creating a new author
 router.post("/create-author", async (req, res) => {
   try {
     let newDocument = {
@@ -52,7 +56,25 @@ router.post("/create-author", async (req, res) => {
   }
 });
 
-// This section will help you update a record by id.
+// creating a new author using transactions when appropriate
+router.post("/create-author", async (req, res) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const newAuthor = await Author.create([req.body], { session: session });
+    await session.commitTransaction();
+
+    res.status(200).json({ success: true, data: newAuthor });
+  } catch (error) {
+    await session.abortTransaction();
+    res.status(500).json({ success: false, error: error.message });
+  } finally {
+    session.endSession();
+  }
+});
+
+// updates author by id
 router.patch("/edit-author/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };

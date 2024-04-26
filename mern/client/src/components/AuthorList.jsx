@@ -47,7 +47,6 @@ export default function authorList() {
       if (genderFilter) {
         url += `?gender=${genderFilter}`;
       }
-      console.log(url);
       const response = await fetch(url);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
@@ -86,7 +85,6 @@ export default function authorList() {
   const handleFilterChange = (selectedGender) => {
     setGenderFilter(selectedGender);
     navigateTo(`/author${selectedGender ? `?gender=${selectedGender}` : ""}`);
-    console.log(selectedGender);
   };
 
   // This following section will display the table with the records of individuals.

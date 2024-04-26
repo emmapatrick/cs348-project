@@ -6,6 +6,9 @@ import db from "../db/connection.js";
 // This help convert the id from string to ObjectId for the _id.
 import { ObjectId } from "mongodb";
 
+import mongoose from "mongoose";
+import Book from "../../client/src/models/BookModel.js";
+
 // router is an instance of the express router.
 // We use it to define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
@@ -13,9 +16,16 @@ const router = express.Router();
 
 // This section will help you get a list of all the records.
 router.get("/", async (req, res) => {
-  let collection = await db.collection("books");
-  let results = await collection.find({}).toArray();
-  res.send(results).status(200);
+  try {
+    const { genre } = req.query;
+    const filter = genre ? { genre } : {};
+    const collection = db.collection("books");
+    const results = await collection.find(filter).toArray();
+    res.send(results).status(200);
+  } catch (error) {
+    console.error("Error fetching books:", error);
+    res.status(500).send("Error fetching books");
+  }
 });
 
 // This section will help you get a single record by id
@@ -28,7 +38,7 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// This section will help you create a new record.
+// create a new book
 router.post("/create-book", async (req, res) => {
   try {
     let newDocument = {
@@ -46,7 +56,25 @@ router.post("/create-book", async (req, res) => {
   }
 });
 
-// This section will help you update a record by id.
+// creates a new book using transactions when appropriate
+router.post("/create-book", async (req, res) => {
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+
+    const newBook = await Book.create([req.body], { session: session });
+    await session.commitTransaction();
+
+    res.status(200).json({ success: true, data: newBook });
+  } catch (error) {
+    await session.abortTransaction();
+    res.status(500).json({ success: false, error: error.message });
+  } finally {
+    session.endSession();
+  }
+});
+
+// updates book by id
 router.patch("/edit-book/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
